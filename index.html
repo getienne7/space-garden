@@ -407,25 +407,79 @@
     const a = (-90 + 36 * i) * Math.PI / 180, r = i % 2 ? 19 : 46;
     return [50 + r * Math.cos(a), 52 + r * Math.sin(a)];
   }));
+  // face: [x, y, size] in the 100x100 box. solid: drawn in 3D with light/dark shades of the color.
   const SHAPES = [
-    { name: 'Circle',        d: 'M6 50 A44 44 0 1 0 94 50 A44 44 0 1 0 6 50 Z', note: 'It is round!' },
-    { name: 'Oval',          d: 'M4 50 A46 30 0 1 0 96 50 A46 30 0 1 0 4 50 Z', note: 'Like an egg!' },
-    { name: 'Triangle',      d: pts([[50, 8], [94, 88], [6, 88]]), sides: 3 },
-    { name: 'Square',        d: pts([[12, 12], [88, 12], [88, 88], [12, 88]]), sides: 4 },
-    { name: 'Rectangle',     d: pts([[4, 24], [96, 24], [96, 76], [4, 76]]), sides: 4 },
-    { name: 'Rhombus',       d: pts([[50, 4], [86, 50], [50, 96], [14, 50]]), sides: 4 },
-    { name: 'Trapezoid',     d: pts([[28, 22], [72, 22], [96, 80], [4, 80]]), sides: 4 },
-    { name: 'Parallelogram', d: pts([[28, 24], [98, 24], [72, 78], [2, 78]]), sides: 4 },
-    { name: 'Pentagon',      d: poly(5), sides: 5 },
-    { name: 'Hexagon',       d: poly(6, 0), sides: 6 },
-    { name: 'Heptagon',      d: poly(7), sides: 7 },
-    { name: 'Octagon',       d: poly(8, -67.5), sides: 8 },
-    { name: 'Star',          d: star(), note: 'It has 5 points!' },
-    { name: 'Heart',         d: 'M50 88 C10 60 4 38 18 22 C32 8 48 16 50 30 C52 16 68 8 82 22 C96 38 90 60 50 88 Z', note: 'A heart for love!' },
-    { name: 'Crescent',      d: 'M58 6 A44 44 0 0 0 58 94 A30 44 0 0 1 58 6 Z', note: 'Like the Moon!' },
-    { name: 'Cross',         d: pts([[36, 6], [64, 6], [64, 36], [94, 36], [94, 64], [64, 64], [64, 94], [36, 94], [36, 64], [6, 64], [6, 36], [36, 36]]), note: 'Like a plus sign!' },
+    { name: 'Circle',        d: 'M6 50 A44 44 0 1 0 94 50 A44 44 0 1 0 6 50 Z', note: 'It is round!', face: [50, 50, 46] },
+    { name: 'Oval',          d: 'M4 50 A46 30 0 1 0 96 50 A46 30 0 1 0 4 50 Z', note: 'Like an egg!', face: [50, 50, 42] },
+    { name: 'Semicircle',    d: 'M6 72 A44 44 0 0 1 94 72 Z', note: 'Half a circle!', face: [50, 54, 32] },
+    { name: 'Quarter circle', d: 'M14 88 L14 14 A74 74 0 0 1 88 88 Z', note: 'A quarter of a circle!', face: [38, 62, 28] },
+    { name: 'Triangle',      d: pts([[50, 8], [94, 88], [6, 88]]), sides: 3, face: [50, 64, 30] },
+    { name: 'Right triangle', d: pts([[12, 10], [12, 90], [90, 90]]), sides: 3, face: [34, 68, 24] },
+    { name: 'Square',        d: pts([[12, 12], [88, 12], [88, 88], [12, 88]]), sides: 4, face: [50, 50, 46] },
+    { name: 'Rectangle',     d: pts([[4, 24], [96, 24], [96, 76], [4, 76]]), sides: 4, face: [50, 50, 40] },
+    { name: 'Rhombus',       d: pts([[50, 4], [86, 50], [50, 96], [14, 50]]), sides: 4, face: [50, 50, 30] },
+    { name: 'Kite',          d: pts([[50, 4], [84, 38], [50, 96], [16, 38]]), sides: 4, face: [50, 40, 30] },
+    { name: 'Trapezoid',     d: pts([[28, 22], [72, 22], [96, 80], [4, 80]]), sides: 4, face: [50, 52, 34] },
+    { name: 'Parallelogram', d: pts([[28, 24], [98, 24], [72, 78], [2, 78]]), sides: 4, face: [50, 51, 32] },
+    { name: 'Pentagon',      d: poly(5), sides: 5, face: [50, 54, 44] },
+    { name: 'Hexagon',       d: poly(6, 0), sides: 6, face: [50, 50, 46] },
+    { name: 'Heptagon',      d: poly(7), sides: 7, face: [50, 52, 44], many: true },
+    { name: 'Octagon',       d: poly(8, -67.5), sides: 8, face: [50, 50, 46], many: true },
+    { name: 'Nonagon',       d: poly(9), sides: 9, face: [50, 52, 46], many: true },
+    { name: 'Decagon',       d: poly(10), sides: 10, face: [50, 50, 46], many: true },
+    { name: 'Star',          d: star(), note: 'It has 5 points!', face: [50, 54, 26] },
+    { name: 'Heart',         d: 'M50 88 C10 60 4 38 18 22 C32 8 48 16 50 30 C52 16 68 8 82 22 C96 38 90 60 50 88 Z', note: 'A heart for love!', face: [50, 44, 38] },
+    { name: 'Crescent',      d: 'M58 6 A44 44 0 0 0 58 94 A18 44 0 0 1 58 6 Z', note: 'Like the Moon!', face: [28, 50, 17] },
+    { name: 'Cross',         d: pts([[36, 6], [64, 6], [64, 36], [94, 36], [94, 64], [64, 64], [64, 94], [36, 94], [36, 64], [6, 64], [6, 36], [36, 36]]), note: 'Like a plus sign!', face: [50, 50, 26] },
+    { name: 'Arrow',         d: pts([[4, 36], [56, 36], [56, 12], [96, 50], [56, 88], [56, 64], [4, 64]]), note: 'It points the way!', face: [40, 50, 24] },
+    { name: 'Ring',          d: 'M6 50 A44 44 0 1 0 94 50 A44 44 0 1 0 6 50 Z M32 50 A18 18 0 1 1 68 50 A18 18 0 1 1 32 50 Z', note: 'Like a donut!', face: [50, 81, 22] },
+    { name: 'Teardrop',      d: 'M50 4 C66 30 86 46 86 62 A36 36 0 0 1 14 62 C14 46 34 30 50 4 Z', note: 'Like a raindrop!', face: [50, 64, 38] },
+    { name: 'Cloud',         d: 'M24 80 A18 18 0 0 1 20 44 A22 22 0 0 1 60 30 A20 20 0 0 1 90 56 A14 14 0 0 1 80 78 Z', note: 'Like a fluffy cloud!', face: [54, 60, 30] },
+    { name: 'Pill',          d: 'M30 26 L70 26 A24 24 0 0 1 70 74 L30 74 A24 24 0 0 1 30 26 Z', note: 'Round at both ends!', face: [50, 50, 38] },
+    { name: 'Sphere',   solid: 'sphere',   note: 'Round like a ball!', face: [50, 52, 56] },
+    { name: 'Cube',     solid: 'cube',     note: 'Like a box!', face: [40, 60, 40] },
+    { name: 'Cylinder', solid: 'cylinder', note: 'Like a can!', face: [46, 54, 40] },
+    { name: 'Cone',     solid: 'cone',     note: 'Like an ice cream cone!', face: [46, 66, 32] },
+    { name: 'Pyramid',  solid: 'pyramid',  note: 'Pointy like a pyramid!', face: [42, 70, 28] },
   ];
-  const shapeSVG = (s, fill) => `<svg viewBox="0 0 100 100"><path d="${s.d}" fill="${fill}" stroke="rgba(255,255,255,.9)" stroke-width="4" stroke-linejoin="round"/></svg>`;
+
+  // The same face every Space Garden character has: shiny eyes, rosy cheeks, a smile.
+  const f1 = (v) => v.toFixed(1);
+  function faceSVG(cx, cy, s) {
+    const ex = s * .27, rx = s * .085, ry = s * .11, my = cy + s * .14, w = s * .13;
+    let o = '';
+    for (const k of [-1, 1]) {
+      const x = cx + k * ex;
+      o += `<ellipse cx="${f1(x)}" cy="${f1(cy)}" rx="${f1(rx)}" ry="${f1(ry)}" fill="#2B2240"/>`
+         + `<circle cx="${f1(x - rx * .3)}" cy="${f1(cy - ry * .4)}" r="${f1(rx * .38)}" fill="#fff"/>`
+         + `<ellipse cx="${f1(cx + k * s * .43)}" cy="${f1(cy + s * .17)}" rx="${f1(s * .085)}" ry="${f1(s * .06)}" fill="#FF8FA8" opacity=".6"/>`;
+    }
+    return o + `<path d="M${f1(cx - w)} ${f1(my)} Q${f1(cx)} ${f1(my + s * .16)} ${f1(cx + w)} ${f1(my)}" fill="none" stroke="#2B2240" stroke-width="${f1(s * .045)}" stroke-linecap="round"/>`;
+  }
+  // lighten (amt > 0) or darken (amt < 0) a #rrggbb color
+  const shade = (hex, amt) => '#' + [1, 3, 5].map((i) => {
+    const c = parseInt(hex.slice(i, i + 2), 16), t = amt < 0 ? 0 : 255;
+    return Math.round(c + (t - c) * Math.abs(amt)).toString(16).padStart(2, '0');
+  }).join('');
+  let svgUid = 0;
+  function solidSVG(kind, c) {
+    const dk = shade(c, -.28), lt = shade(c, .35);
+    if (kind === 'sphere') {
+      const id = 'sg' + (++svgUid);
+      return `<defs><clipPath id="${id}"><circle cx="50" cy="50" r="44"/></clipPath></defs><circle cx="50" cy="50" r="44" fill="${dk}"/>`
+           + `<circle cx="45.6" cy="44.7" r="42.7" fill="${c}" clip-path="url(#${id})"/>`
+           + '<ellipse cx="30" cy="28" rx="9" ry="5.3" fill="#fff" opacity=".55" transform="rotate(-35 30 28)"/>';
+    }
+    if (kind === 'cube') return `<path d="M14 34 L34 14 L86 14 L66 34 Z" fill="${lt}"/><path d="M66 34 L86 14 L86 66 L66 86 Z" fill="${dk}"/><rect x="14" y="34" width="52" height="52" fill="${c}"/>`;
+    if (kind === 'cylinder') return `<path d="M20 22 L20 80 A30 10 0 0 0 80 80 L80 22 Z" fill="${c}"/><path d="M62 24 L80 22 L80 80 A30 10 0 0 1 62 89 Z" fill="${dk}"/><ellipse cx="50" cy="22" rx="30" ry="10" fill="${lt}"/>`;
+    if (kind === 'cone') return `<path d="M50 6 L86 82 A36 12 0 0 1 14 82 Z" fill="${c}"/><path d="M50 6 L86 82 A36 12 0 0 1 56 94 Z" fill="${dk}"/>`;
+    return `<path d="M50 6 L10 84 L62 94 Z" fill="${c}"/><path d="M50 6 L62 94 L92 76 Z" fill="${dk}"/>`; // pyramid
+  }
+  const shapeSVG = (s, fill, withFace = true) => {
+    const body = s.solid ? solidSVG(s.solid, fill)
+      : `<path d="${s.d}" fill="${fill}" fill-rule="evenodd" stroke="rgba(255,255,255,.9)" stroke-width="4" stroke-linejoin="round"/>`;
+    return `<svg viewBox="0 0 100 100">${body}${withFace ? faceSVG(...s.face) : ''}</svg>`;
+  };
 
   const MAX_FRUITS = 12;
   const QUIZ_ROUND = 3;                // right answers before the big celebration
@@ -703,7 +757,12 @@
       showBanner(`Where's ${p.name}?`, 'Tap it!', 0);
       say(`Where's ${p.name}?`);
     } else {
-      const choices = shuffle(SHAPES.filter((s) => s !== quiz.last)).slice(0, 3);
+      const choices = [];
+      for (const s of shuffle(SHAPES.filter((x) => x !== quiz.last))) {
+        if (s.many && choices.some((c) => c.many)) continue; // heptagon vs decagon is too hard
+        choices.push(s);
+        if (choices.length === 3) break;
+      }
       const target = choices[0];
       const size = Math.max(70, Math.min(120, W / 5));
       const y = Math.max(cy - Ry * .45, size + 120);
@@ -1167,12 +1226,12 @@
   function spawnFloater() {
     const isShape = Math.random() < .5;
     const el = document.createElement('div');
-    const m = { el, x: W * (.3 + Math.random() * .8), y: -50, rot: Math.random() * 360, dead: false, isShape };
+    const m = { el, x: W * (.3 + Math.random() * .8), y: -50, rot: (Math.random() - .5) * 40, dead: false, isShape };
     if (isShape) {
       m.shape = pick(SHAPES); m.color = pick(COLORS_NAMED);
       el.className = 'body floater';
       el.innerHTML = `<div class="inner">${shapeSVG(m.shape, m.color.hex)}</div>`;
-      m.vx = -(30 + Math.random() * 30); m.vy = 55 + Math.random() * 40; m.vr = (Math.random() - .5) * 40;
+      m.vx = -(30 + Math.random() * 30); m.vy = 55 + Math.random() * 40; m.vr = (Math.random() - .5) * 12;
     } else {
       el.className = 'body meteor';
       el.textContent = '☄️';
