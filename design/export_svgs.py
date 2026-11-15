@@ -3,7 +3,7 @@ Usage: python3 design/export_svgs.py   (from the repo root or design/)"""
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from chars import pip, ufo, rocket
+from chars import pip, ufo, rocket, fruit2
 
 OUT = os.path.join(HERE, '..', 'assets')
 
@@ -24,6 +24,15 @@ ASSETS = [
     write('ufo', ufo(False), (-2, 40, 204, 134)),
     write('ufo-pip', ufo(True), (-2, 10, 204, 164)),
 ]
+
+# Fruit order = the order of the game's FRUITS list (his favourites first)
+FRUIT_ORDER = ['Apple', 'Banana', 'Watermelon', 'Avocado', 'Strawberry', 'Cherry', 'Grapes', 'Orange',
+               'Lemon', 'Lime', 'Blackberry', 'Blueberry', 'Pineapple', 'Carrot', 'Broccoli', 'Kiwi',
+               'Pear', 'Peach', 'Mango', 'Coconut', 'Tomato', 'Corn', 'Peas', 'Eggplant']
+# Wide/flat fruits get a tighter frame so they don't look tiny next to round ones
+FRAME = {'Watermelon': (5, 12, 190, 190), 'Banana': (30, 24, 160, 160)}
+for n in FRUIT_ORDER:
+    ASSETS.append(write('fruit-' + n.lower(), fruit2(n, 'f'), FRAME.get(n, (-6, -6, 212, 212))))
 
 if __name__ == '__main__':
     print('\n'.join(f'assets/{a}.svg' for a in ASSETS))

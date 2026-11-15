@@ -1,7 +1,8 @@
 // Network first (so updates show up right away), cached copy when offline.
-const CACHE = 'space-garden-v4';
+const CACHE = 'space-garden-v5';
+const FRUIT_ART = ['apple', 'banana', 'watermelon', 'avocado', 'strawberry', 'cherry', 'grapes', 'orange', 'lemon', 'lime', 'blackberry', 'blueberry', 'pineapple', 'carrot', 'broccoli', 'kiwi', 'pear', 'peach', 'mango', 'coconut', 'tomato', 'corn', 'peas', 'eggplant'].map((n) => `./assets/fruit-${n}.svg`);
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-180.png', './icon-192.png', './icon-512.png',
-  './assets/pip-wave.svg', './assets/pip-hungry.svg', './assets/pip-dance.svg', './assets/ufo.svg', './assets/ufo-pip.svg'];
+  './assets/pip-wave.svg', './assets/pip-hungry.svg', './assets/pip-dance.svg', './assets/ufo.svg', './assets/ufo-pip.svg', ...FRUIT_ART];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)));

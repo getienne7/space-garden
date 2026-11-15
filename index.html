@@ -100,6 +100,7 @@
             display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
   #bubble::after { content: ''; position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%);
                    border: 10px solid transparent; border-top-color: #fff; border-bottom: 0; }
+  #bubble .fimg { width: 1.5em; height: 1.5em; }
   #bubble .dot { display: inline-block; width: 1.1em; height: 1.1em; border-radius: 50%; border: 3px solid #0002; }
   .chomp { animation: chomp .35s ease; }
   @keyframes chomp { 30% { transform: scale(1.25, .8); } 60% { transform: scale(.9, 1.15); } }
@@ -118,7 +119,9 @@
               radial-gradient(circle at 86% 22%, rgba(0,0,0,.12) 0 2%, transparent 2.5%),
               linear-gradient(to bottom, var(--ground, #888), var(--ground2, #444));
             box-shadow: 0 -8px 40px var(--ground, #888); }
-  #plots { position: absolute; left: 0; right: 0; display: flex; justify-content: space-evenly; align-items: flex-end; }
+  #plots { position: absolute; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; }
+  .prow { display: flex; justify-content: space-evenly; align-items: flex-end; width: 100%; }
+  .plant .fimg { width: 1.15em; height: 1.15em; }
   .plot { position: relative; display: flex; align-items: flex-end; justify-content: center; }
   .mound { position: absolute; bottom: 0; left: 4%; right: 4%; height: 28%; border-radius: 50% 50% 45% 45%;
            background: radial-gradient(ellipse at 50% 30%, #8d6e63, #4e342e); box-shadow: inset 0 -4px 8px rgba(0,0,0,.4); }
@@ -151,8 +154,16 @@
              display: flex; align-items: center; justify-content: center; font-size: calc(var(--big) * .55);
              background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.28);
              transition: transform .12s, box-shadow .3s, border-color .3s; }
-  #fruits { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-  @media (max-width: 600px) { #fruits { max-width: calc(4 * var(--fb) + 3 * 8px); } }
+  #fruits { display: grid; grid-auto-rows: var(--fb); gap: 8px; justify-content: center; }
+  #fruits .fruit-btn.off { display: none; }
+  #fruits.flip .fruit-btn { animation: drop .3s ease backwards; }
+  .fimg { width: 1em; height: 1em; display: block; pointer-events: none; }
+  .fruit-btn .fimg { width: 1.25em; height: 1.25em; }
+  #pager { background: #ffc93c; position: relative; }
+  #pager svg { width: 52%; height: 52%; }
+  #pager .dots { position: absolute; bottom: 9%; left: 0; right: 0; display: flex; justify-content: center; gap: 3px; }
+  #pager .dots i { width: 5px; height: 5px; border-radius: 50%; background: rgba(43,34,64,.3); }
+  #pager .dots i.on { background: #2b2240; }
   .fruit-btn { width: var(--fb); height: var(--fb); border-radius: 50%; font-size: calc(var(--fb) * .6);
                display: flex; align-items: center; justify-content: center; line-height: 1;
                background: rgba(255,255,255,.12); border: 2px solid transparent; transition: transform .12s; }
@@ -185,7 +196,7 @@
   #badge.show { transform: scale(1); }
   #tray { position: absolute; left: 12px; z-index: 21; display: flex; flex-wrap: wrap; gap: 2px;
           max-width: 150px; font-size: 22px; pointer-events: none; }
-  #tray span { animation: drop .35s ease backwards; }
+  #tray span { display: inline-block; animation: drop .35s ease backwards; }
   @keyframes drop { from { transform: translateY(-20px) scale(0); opacity: 0; } }
 
   #banner { position: absolute; top: calc(44px + env(safe-area-inset-top)); left: 50%; z-index: 30;
@@ -213,6 +224,10 @@
   #book { position: absolute; inset: 0; z-index: 45; display: none; flex-direction: column; align-items: center;
           justify-content: center; gap: 16px; padding: 20px; background: rgba(5,5,16,.97); overflow-y: auto; }
   #book.show { display: flex; }
+  /* tall sticker book: start at the top (centering a scroll box hides its top), keep ✖ always on screen */
+  #book { justify-content: flex-start; padding-top: calc(var(--big) + 24px); }
+  #book > :last-child { margin-bottom: auto; }
+  #book .close-btn { position: fixed; z-index: 2; background: rgba(5,5,16,.9); }
   #book h2 { font-size: clamp(22px, 5vw, 36px); letter-spacing: 3px; text-align: center; }
   #book h2 small { display: block; font-size: 55%; font-weight: 600; color: #ffd54f; margin-top: 4px; }
   .shelf { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: min(560px, 94vw); }
@@ -221,6 +236,7 @@
              border-radius: 18px; background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.15); }
   .sticker .pic { position: relative; width: 48px; height: 48px; font-size: 40px; line-height: 48px; text-align: center; }
   .sticker .pic .ball { position: absolute; inset: 4px; width: auto; height: auto; }
+  .sticker .pic .fimg { width: 46px; height: 46px; margin: 1px; }
   .sticker .name { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,.75); }
   .sticker.locked .pic { filter: grayscale(1) brightness(.3); }
   .sticker.locked .name { opacity: .3; }
@@ -238,6 +254,7 @@
   .chip { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,.12); font-size: 28px; line-height: 1;
           display: flex; align-items: center; justify-content: center; border: 3px solid transparent; }
   .chip svg { width: 30px; height: 30px; }
+  .chip .fimg { width: 34px; height: 34px; }
   .chip.on { border-color: #ffd54f; background: rgba(255,213,79,.2); }
   #paper { position: relative; flex: 1; min-height: 160px; width: min(900px, 100%); background: #fff; border-radius: 22px; overflow: hidden; }
   #paper canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -340,17 +357,38 @@
       bg: 'radial-gradient(circle at 35% 35%, #9fb8ff, #3f6fe0 55%, #1a2f8a)' },
   ];
 
+  // Order = tray order: his favourites first. f = the note it plays. noColor: say just the name.
+  // noCount: never used in "Can I have 3 ...?" requests (sounds odd for mass nouns).
   const FRUITS = [
-    { e: '🍎', name: 'Apple',      plural: 'apples',       color: 'Red',    f: 523 },
-    { e: '🍌', name: 'Banana',     plural: 'bananas',      color: 'Yellow', f: 587 },
-    { e: '🍇', name: 'Grapes',     plural: 'grapes',       color: 'Purple', f: 659, mass: true },
-    { e: '🍊', name: 'Orange',     plural: 'oranges',      color: 'Orange', f: 698 },
-    { e: '🥦', name: 'Broccoli',   plural: 'broccoli',     color: 'Green',  f: 784, mass: true },
-    { e: '🥕', name: 'Carrot',     plural: 'carrots',      color: 'Orange', f: 880 },
-    { e: '🍓', name: 'Strawberry', plural: 'strawberries', color: 'Red',    f: 988 },
-    { e: '🍍', name: 'Pineapple',  plural: 'pineapples',   color: 'Yellow', f: 1047 },
+    { name: 'Apple',      plural: 'apples',       color: 'Red',    f: 523 },
+    { name: 'Banana',     plural: 'bananas',      color: 'Yellow', f: 587 },
+    { name: 'Watermelon', plural: 'watermelons',  color: 'Red',    f: 659, noColor: true },
+    { name: 'Avocado',    plural: 'avocados',     color: 'Green',  f: 698 },
+    { name: 'Strawberry', plural: 'strawberries', color: 'Red',    f: 988 },
+    { name: 'Cherry',     plural: 'cherries',     color: 'Red',    f: 784 },
+    { name: 'Grapes',     plural: 'grapes',       color: 'Purple', f: 659, mass: true },
+    { name: 'Orange',     plural: 'oranges',      color: 'Orange', f: 698 },
+    { name: 'Lemon',      plural: 'lemons',       color: 'Yellow', f: 880 },
+    { name: 'Lime',       plural: 'limes',        color: 'Green',  f: 784 },
+    { name: 'Blackberry', plural: 'blackberries', color: 'Purple', f: 587 },
+    { name: 'Blueberry',  plural: 'blueberries',  color: 'Blue',   f: 1047 },
+    { name: 'Pineapple',  plural: 'pineapples',   color: 'Yellow', f: 1047 },
+    { name: 'Carrot',     plural: 'carrots',      color: 'Orange', f: 880 },
+    { name: 'Broccoli',   plural: 'broccoli',     color: 'Green',  f: 784, mass: true, noCount: true },
+    { name: 'Kiwi',       plural: 'kiwis',        color: 'Green',  f: 659 },
+    { name: 'Pear',       plural: 'pears',        color: 'Green',  f: 587 },
+    { name: 'Peach',      plural: 'peaches',      color: 'Orange', f: 523 },
+    { name: 'Mango',      plural: 'mangoes',      color: 'Orange', f: 698 },
+    { name: 'Coconut',    plural: 'coconuts',     color: 'Brown',  f: 440 },
+    { name: 'Tomato',     plural: 'tomatoes',     color: 'Red',    f: 523 },
+    { name: 'Corn',       plural: 'corn',         color: 'Yellow', f: 494, mass: true, noCount: true },
+    { name: 'Peas',       plural: 'peas',         color: 'Green',  f: 587, mass: true, noCount: true },
+    { name: 'Eggplant',   plural: 'eggplants',    color: 'Purple', f: 440 },
   ];
-  const FRUIT_COLOR_HEX = { Red: '#ff4757', Yellow: '#feca57', Purple: '#a55eea', Orange: '#ff9f43', Green: '#1dd1a1' };
+  FRUITS.forEach((d) => { d.img = `assets/fruit-${d.name.toLowerCase()}.svg`; });
+  const fimg = (d) => `<img class="fimg" src="${d.img}" alt="${d.name}" draggable="false">`;
+  const FRUIT_COLOR_HEX = { Red: '#ff4757', Yellow: '#feca57', Purple: '#a55eea', Orange: '#ff9f43', Green: '#1dd1a1',
+                            Blue: '#3b82f6', Brown: '#8d5a3c' };
 
   const COLORS_NAMED = [
     { name: 'Red', hex: '#ff4757' }, { name: 'Orange', hex: '#ff9f43' }, { name: 'Yellow', hex: '#feca57' },
@@ -391,7 +429,8 @@
 
   const MAX_FRUITS = 12;
   const QUIZ_ROUND = 3;                // right answers before the big celebration
-  const PLOTS = 4;                     // garden spots on each planet
+  const PLOTS = 12;                    // garden spots on each planet: 3 rows of 4
+  const PLOT_ROWS = 3, ROW_SCALE = [.72, .86, 1]; // back row smaller = looks further away
   const STAGE_AT = [0, 1.2, 2.4, 3.6]; // seconds: seed, sprout, leaves, fruit
   const ALIEN_MEALS = 3;               // requests before the alien flies home
 
@@ -400,7 +439,7 @@
   const pick = (a) => a[(Math.random() * a.length) | 0];
   const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const an = (word) => (/^[aeiou]/i.test(word) ? 'an ' : 'a ') + word;
-  const phrase = (d) => d.name === d.color ? d.name : `${d.color} ${d.name.toLowerCase()}`;   // "Red apple"
+  const phrase = (d) => d.name === d.color || d.noColor ? d.name : `${d.color} ${d.name.toLowerCase()}`;   // "Red apple"
   const aFruit = (d, withColor) => {                                                           // "a red apple", "some grapes"
     const w = (withColor ? phrase(d) : d.name).toLowerCase();
     return d.mass ? 'some ' + w : an(w);
@@ -494,7 +533,7 @@
   function flyEmoji(emoji, from, to, size, done, ms = 550) {
     const fly = document.createElement('div');
     fly.className = 'flying';
-    fly.textContent = emoji;
+    if (emoji.startsWith('<')) fly.innerHTML = emoji; else fly.textContent = emoji;
     fly.style.fontSize = size + 'px';
     fly.style.transition = `transform ${ms}ms cubic-bezier(.4,0,.2,1), opacity ${ms}ms`;
     document.body.appendChild(fly);
@@ -595,7 +634,7 @@
       const have = store.fruits.includes(d.name);
       const el = document.createElement('div');
       el.className = 'sticker' + (have ? '' : ' locked');
-      el.innerHTML = `<div class="pic">${d.e}</div><div class="name">${have ? d.name : '?'}</div>`;
+      el.innerHTML = `<div class="pic">${fimg(d)}</div><div class="name">${have ? d.name : '?'}</div>`;
       onTap(el, () => { boop(el.firstChild); say(have ? phrase(d) + '!' : `Pick the ${d.name.toLowerCase()} to get this sticker!`); });
       sf.appendChild(el);
     });
@@ -751,13 +790,21 @@
   onTap(quizBtn, () => { press(quizBtn); quiz.active ? stopQuiz() : startQuiz(); });
 
   /* ================= Garden plots on the planet surface ================= */
-  const plots = [];
+  // Rows are added back-to-front; spot 0-3 is the front (biggest) row so planting fills it first.
+  const plots = [], prows = [];
+  for (let r = 0; r < PLOT_ROWS; r++) {
+    const row = document.createElement('div');
+    row.className = 'prow';
+    plotsBox.appendChild(row);
+    prows.push(row);
+  }
   for (let i = 0; i < PLOTS; i++) {
+    const r = PLOT_ROWS - 1 - Math.floor(i / 4);
     const el = document.createElement('div');
     el.className = 'plot';
     el.innerHTML = '<div class="mound"></div><div class="plant"></div>';
-    plotsBox.appendChild(el);
-    plots.push({ el, plant: el.querySelector('.plant') });
+    prows[r].appendChild(el);
+    plots.push({ el, plant: el.querySelector('.plant'), row: r });
     onTap(el, () => tapPlot(i));
   }
   const stageOf = (t) => t >= STAGE_AT[3] ? 3 : t >= STAGE_AT[2] ? 2 : t >= STAGE_AT[1] ? 1 : 0;
@@ -767,7 +814,7 @@
     const s = current && current.garden[i], plant = plots[i].plant;
     if (!s) { plant.style.setProperty('--s', 0); plant.classList.remove('ripe'); return; }
     const ripe = s.stage === 3;
-    plant.textContent = ripe ? s.d.e : STAGE_LOOK[s.stage].e;
+    if (ripe) plant.innerHTML = fimg(s.d); else plant.textContent = STAGE_LOOK[s.stage].e;
     plant.style.setProperty('--s', ripe ? 1.1 : STAGE_LOOK[s.stage].s);
     plant.classList.toggle('ripe', ripe);
   }
@@ -827,7 +874,7 @@
     renderSlot(i);
     const to = center(basket);
     tone(s.d.f, { to: s.d.f / 2, dur: .5 });
-    flyEmoji(s.d.e, center(plots[i].plant), to, parseFloat(getComputedStyle(plotsBox).fontSize), (fly) => {
+    flyEmoji(fimg(s.d), center(plots[i].plant), to, parseFloat(getComputedStyle(prows[plots[i].row]).fontSize), (fly) => {
       fly.remove();
       collectItem(s.d, to.x, to.y);
     }, 600);
@@ -906,11 +953,18 @@
   let W, H, cx, cy, Rx, Ry, sunR, fruitSize;
   function layoutSurface() {
     const dockH = dock.offsetHeight;
-    const plotSize = Math.max(64, Math.min(130, W / 5.2));
+    // biggest spot size where 3 rows still fit in the lower ~60% of the screen
+    const rowsK = ROW_SCALE.reduce((a, k) => a + k * .85, 0) + .25;
+    const plotSize = Math.max(64, Math.min(130, W / 5.2, (H * .62 - dockH - 40) / rowsK));
     plotsBox.style.bottom = dockH + 6 + 'px';
-    plotsBox.style.fontSize = plotSize * .62 + 'px';
-    plots.forEach((p) => { p.el.style.width = plotSize + 'px'; p.el.style.height = plotSize * 1.1 + 'px'; });
-    const groundH = Math.max(H * .42, dockH + plotSize * 1.1 + 70);
+    prows.forEach((row, r) => {
+      const sz = plotSize * ROW_SCALE[r];
+      row.style.fontSize = sz * .62 + 'px';
+      row.style.maxWidth = sz * 6.4 + 'px';
+      row.style.marginTop = r ? -sz * .25 + 'px' : '0';
+    });
+    plots.forEach((p) => { const sz = plotSize * ROW_SCALE[p.row]; p.el.style.width = sz + 'px'; p.el.style.height = sz * 1.1 + 'px'; });
+    const groundH = Math.max(H * .42, dockH + plotsBox.offsetHeight + 50);
     ground.style.height = groundH + 'px';
     lander.style.fontSize = plotSize * .8 + 'px';
     lander.style.bottom = groundH - 26 + 'px';
@@ -918,6 +972,7 @@
 
   function layout() {
     W = innerWidth; H = innerHeight;
+    layoutFruits();
     const dpr = Math.min(2, devicePixelRatio || 1);
     cv.width = W * dpr; cv.height = H * dpr;
     cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -965,7 +1020,7 @@
     if (fruits.filter((f) => f.state !== 'fall').length >= MAX_FRUITS) { tone(180, { dur: .2, vol: .15 }); return; }
     const el = document.createElement('div');
     el.className = 'body fruit';
-    el.innerHTML = `<div class="inner">${d.e}</div>`;
+    el.innerHTML = `<div class="inner">${fimg(d)}</div>`;
     space.appendChild(el);
 
     const start = center(btn);
@@ -980,10 +1035,10 @@
     tone(d.f);
   }
 
-  FRUITS.forEach((d) => {
+  const fruitBtns = FRUITS.map((d) => {
     const b = document.createElement('div');
     b.className = 'fruit-btn';
-    b.textContent = d.e;
+    b.innerHTML = fimg(d);
     fruitBox.appendChild(b);
     onTap(b, () => {
       press(b);
@@ -991,6 +1046,40 @@
       else if (scene === 'planet') plant(d);
       else if (scene === 'space') launchFruit(d, b);
     });
+    return b;
+  });
+
+  /* Pages of fruit buttons: 2 rows. Wide screens show all of them; phones get a big ▶ "more" button. */
+  const pager = document.createElement('div');
+  pager.className = 'fruit-btn';
+  pager.id = 'pager';
+  pager.setAttribute('aria-label', 'More fruits');
+  fruitBox.appendChild(pager);
+  let fPage = 0, fPer = FRUITS.length, fPages = 1;
+  function showFruitPage(animate) {
+    const all = fPages === 1;
+    fruitBtns.forEach((b, i) => b.classList.toggle('off', !all && Math.floor(i / fPer) !== fPage));
+    pager.classList.toggle('off', all);
+    pager.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4l9 8-9 8z" fill="#2b2240" stroke="#2b2240" stroke-width="2" stroke-linejoin="round"/></svg>'
+      + '<div class="dots">' + Array.from({ length: fPages }, (_, i) => `<i class="${i === fPage ? 'on' : ''}"></i>`).join('') + '</div>';
+    if (animate) anim(fruitBox, 'flip');
+  }
+  function layoutFruits() {
+    const fb = pager.offsetWidth || fruitBtns[0].offsetWidth || 46;
+    const side = (basket.offsetWidth || 58) * 2 + 24 + 20;
+    const cols = Math.max(3, Math.min(Math.ceil(FRUITS.length / 2), Math.floor((innerWidth - side + 8) / (fb + 8))));
+    const fits = cols * 2 >= FRUITS.length;
+    fPer = fits ? FRUITS.length : cols * 2 - 1;
+    fPages = fits ? 1 : Math.ceil(FRUITS.length / fPer);
+    if (fPage >= fPages) fPage = 0;
+    fruitBox.style.gridTemplateColumns = `repeat(${cols}, var(--fb))`;
+    showFruitPage(false);
+  }
+  onTap(pager, () => {
+    press(pager);
+    fPage = (fPage + 1) % fPages;
+    showFruitPage(true);
+    tone(660, { to: 880, dur: .15, vol: .15 });
   });
 
   /* ================= Basket: counts out loud ================= */
@@ -1001,10 +1090,10 @@
     count++; updateBadge(); boop(basket);
     confetti(x, y - 20, 14, .5);
     const s = document.createElement('span');
-    s.textContent = d.e;
+    s.innerHTML = fimg(d);
     tray.appendChild(s);
     while (tray.children.length > 12) tray.firstChild.remove();
-    unlock('fruits', d.name, d.e);
+    unlock('fruits', d.name, d.name);
     if (count % 10 === 0) {
       say(`${count}! ${count} fruits in the basket! ${praise()}`);
       showBanner(`${count} fruits!`, '🧺', 2500);
@@ -1175,8 +1264,8 @@
       return { type: 'color', color, need: 1, got: 0, ask: `Can I have something ${color.toLowerCase()}?`,
                again: `I want something ${color.toLowerCase()}!`, bubble: `<span class="dot" style="background:${FRUIT_COLOR_HEX[color]}"></span>❓` };
     }
-    const d = pick(FRUITS), n = 2 + ((Math.random() * 4) | 0);
-    return { type: 'count', d, need: n, got: 0, ask: `Can I have ${n} ${d.plural}?`, again: `I want ${d.plural}!`, bubble: `${n} ${d.e}` };
+    const d = pick(FRUITS.filter((x) => !x.noCount)), n = 2 + ((Math.random() * 4) | 0);
+    return { type: 'count', d, need: n, got: 0, ask: `Can I have ${n} ${d.plural}?`, again: `I want ${d.plural}!`, bubble: `${n} ${fimg(d)}` };
   }
   const wants = (req, d) => req.type === 'color' ? d.color === req.color : d === req.d;
 
@@ -1222,14 +1311,14 @@
     const req = alien.req;
     if (!req || req.done) { tone(220, { dur: .15, vol: .12 }); return; }
     const mouth = center(alienFace);
-    flyEmoji(d.e, center(btn), mouth, 44, (fly) => {
+    flyEmoji(fimg(d), center(btn), mouth, 44, (fly) => {
       if (alien.req !== req || req.done) { fly.remove(); return; }
       if (wants(req, d)) {
         fly.remove();
         anim(alienFace, 'chomp');
         tone(330, { dur: .12 }); setTimeout(() => tone(440, { dur: .15 }), 110);
         req.got++;
-        if (req.got < req.need) { say(String(req.got)); bubble.innerHTML = `${req.need - req.got} ${req.d.e}`; return; }
+        if (req.got < req.need) { say(String(req.got)); bubble.innerHTML = `${req.need - req.got} ${fimg(req.d)}`; return; }
         req.done = true;
         alien.served++;
         pipPose('dance');
@@ -1258,7 +1347,11 @@
   /* ================= ✏️ Drawing pad ================= */
   const drawEl = $('draw'), paper = $('paper'), dcv = $('draw-cv'), scv = $('stencil-cv');
   const dctx = dcv.getContext('2d'), sctx = scv.getContext('2d');
-  const STENCILS = [{ none: true, label: '🚫' }, ...FRUITS.map((d) => ({ e: d.e, name: d.name.toLowerCase(), say: aFruit(d) })),
+  const STENCIL_FRUITS = ['Apple', 'Banana', 'Watermelon', 'Avocado', 'Strawberry', 'Cherry', 'Pear', 'Pineapple'];
+  const STENCILS = [{ none: true, label: '🚫' }, ...STENCIL_FRUITS.map((n) => FRUITS.find((d) => d.name === n)).map((d) => {
+                      const pic = new Image(); pic.src = d.img; pic.onload = () => { if (stencil && stencil.pic === pic) drawStencil(); };
+                      return { d, pic, name: d.name.toLowerCase(), say: aFruit(d) };
+                    }),
                     ...['Star', 'Heart', 'Hexagon', 'Triangle', 'Trapezoid'].map((n) => SHAPES.find((s) => s.name === n))
                       .map((s) => ({ shape: s, name: s.name.toLowerCase(), say: an(s.name.toLowerCase()) }))];
   let pen = PAINTS[0], stencil = STENCILS[0], dirty = false, paperW = 0, paperH = 0;
@@ -1281,11 +1374,9 @@
     if (stencil.none) return;
     const size = Math.min(paperW, paperH) * .8;
     sctx.save();
-    if (stencil.e) {
-      sctx.globalAlpha = .18;
-      sctx.font = `${size}px serif`;
-      sctx.textAlign = 'center'; sctx.textBaseline = 'middle';
-      sctx.fillText(stencil.e, paperW / 2, paperH / 2 + size * .05);
+    if (stencil.pic) {
+      sctx.globalAlpha = .2;
+      if (stencil.pic.complete && stencil.pic.naturalWidth) sctx.drawImage(stencil.pic, paperW / 2 - size / 2, paperH / 2 - size / 2, size, size);
     } else {
       sctx.translate(paperW / 2 - size / 2, paperH / 2 - size / 2);
       sctx.scale(size / 100, size / 100);
@@ -1335,7 +1426,7 @@
   STENCILS.forEach((s) => {
     const chip = document.createElement('div');
     chip.className = 'chip' + (s === stencil ? ' on' : '');
-    chip.innerHTML = s.none ? s.label : s.e ? s.e : shapeSVG(s.shape, '#ffd54f');
+    chip.innerHTML = s.none ? s.label : s.d ? fimg(s.d) : shapeSVG(s.shape, '#ffd54f');
     stencilsEl.appendChild(chip);
     onTap(chip, () => {
       stencil = s;
