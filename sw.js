@@ -1,5 +1,5 @@
 // Network first (so updates show up right away), cached copy when offline.
-const CACHE = 'space-garden-v2';
+const CACHE = 'space-garden-v3';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
