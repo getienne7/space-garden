@@ -1,6 +1,7 @@
 // Network first (so updates show up right away), cached copy when offline.
-const CACHE = 'space-garden-v3';
-const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-180.png', './icon-192.png', './icon-512.png'];
+const CACHE = 'space-garden-v4';
+const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-180.png', './icon-192.png', './icon-512.png',
+  './assets/pip-wave.svg', './assets/pip-hungry.svg', './assets/pip-dance.svg', './assets/ufo.svg', './assets/ufo-pip.svg'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)));

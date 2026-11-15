@@ -80,7 +80,8 @@
   .qshape.glow svg { animation: sglow .8s ease-in-out infinite alternate; }
   @keyframes sglow { to { filter: drop-shadow(0 0 14px #fff) drop-shadow(0 0 26px #7ab8ff); } }
 
-  #ufo { z-index: 8; font-size: 52px; line-height: 1; display: none; }
+  #ufo { z-index: 8; line-height: 0; display: none; }
+  #ufo img { width: 96px; height: auto; display: block; }
   #flyer { z-index: 15; font-size: 46px; line-height: 1; display: none; pointer-events: none;
            transition: opacity .5s; }
   #confetti { position: absolute; inset: 0; z-index: 28; pointer-events: none; }
@@ -92,8 +93,8 @@
   #alien.in { transform: translate(-50%, 0); }
   #alien::before { content: ''; position: absolute; inset: -10px; }
   #alien .crew { display: flex; flex-direction: column; align-items: center; }
-  #alien .face { font-size: calc(var(--big) * 1.5); line-height: 1; }
-  #alien .ship { font-size: calc(var(--big) * 1.7); line-height: 1; margin-top: calc(var(--big) * -.55); }
+  #alien .face { width: calc(var(--big) * 2.3); height: auto; display: block; position: relative; z-index: 1; }
+  #alien .ship { width: calc(var(--big) * 2.6); height: auto; display: block; margin-top: calc(var(--big) * -.45); }
   #bubble { position: relative; margin-bottom: 10px; padding: 8px 18px; border-radius: 22px; background: #fff;
             color: #222; font-size: calc(var(--big) * .5); font-weight: 800; white-space: nowrap;
             display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
@@ -264,7 +265,7 @@
     <div id="lander"><span class="rk">🚀</span><span class="fl">🔥</span></div>
   </div>
 
-  <div id="alien"><div id="bubble"></div><div class="crew"><div class="face">👽</div><div class="ship">🛸</div></div></div>
+  <div id="alien"><div id="bubble"></div><div class="crew"><img class="face" src="assets/pip-wave.svg" alt="Pip the alien" draggable="false"><img class="ship" src="assets/ufo.svg" alt="" draggable="false"></div></div>
 
   <canvas id="confetti"></canvas>
 
@@ -1128,7 +1129,7 @@
   const ufoEl = document.createElement('div');
   ufoEl.className = 'body';
   ufoEl.id = 'ufo';
-  ufoEl.innerHTML = '<div class="inner">🛸</div>';
+  ufoEl.innerHTML = '<img class="inner" src="assets/ufo-pip.svg" alt="Flying saucer" draggable="false">';
   space.appendChild(ufoEl);
   const ufo = { on: false, wait: 6, x: 0, y: 0, vx: 0, vy: 0, t: 0, leaving: false };
   onTap(ufoEl, () => {
@@ -1179,8 +1180,13 @@
   }
   const wants = (req, d) => req.type === 'color' ? d.color === req.color : d === req.d;
 
+  // Pip's poses: wave (hello / bye), hungry (asking), dance (right answer)
+  const PIP = { wave: 'assets/pip-wave.svg', hungry: 'assets/pip-hungry.svg', dance: 'assets/pip-dance.svg' };
+  Object.values(PIP).forEach((src) => { const i = new Image(); i.src = src; }); // preload: no flicker on swap
+  const pipPose = (k) => { if (alienFace.getAttribute('src') !== PIP[k]) alienFace.src = PIP[k]; };
   function alienArrive() {
     Object.assign(alien, { active: true, req: null, served: 0 });
+    pipPose('wave');
     stopQuiz();
     document.body.classList.add('alien');
     bubble.innerHTML = '👋';
@@ -1192,12 +1198,14 @@
   }
   function nextRequest(first) {
     alien.req = newRequest();
+    pipPose('hungry');
     bubble.innerHTML = alien.req.bubble;
     anim(bubble, 'boop');
     say((first ? withName("Hello") + "! I'm a hungry alien. " : '') + alien.req.ask);
   }
   function alienLeave() {
     alien.req = null;
+    pipPose('wave');
     bubble.innerHTML = '💚';
     say(withName('Thank you') + '! Bye bye!');
     setTimeout(() => {
@@ -1224,6 +1232,7 @@
         if (req.got < req.need) { say(String(req.got)); bubble.innerHTML = `${req.need - req.got} ${req.d.e}`; return; }
         req.done = true;
         alien.served++;
+        pipPose('dance');
         anim(alienEl.querySelector('.crew'), 'dance');
         confetti(mouth.x, mouth.y, 40);
         jingle([523, 659, 784, 1047]);
