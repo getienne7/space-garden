@@ -23,6 +23,8 @@ ASSETS = [
     write('pip-dance', pip('open', 'dance')),
     write('ufo', ufo(False), (-2, 40, 204, 134)),
     write('ufo-pip', ufo(True), (-2, 10, 204, 164)),
+    write('rocket', rocket('smile', flame=False), (30, 8, 140, 160)),
+    write('rocket-fire', rocket('open', flame=True), (30, 8, 140, 200)),
 ]
 
 # Fruit order = the order of the game's FRUITS list (his favourites first)
