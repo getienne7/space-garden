@@ -251,6 +251,39 @@
   .sticker:not(.locked) { border-color: rgba(255,213,79,.6); }
   .close-btn { position: absolute; top: calc(10px + env(safe-area-inset-top)); right: 10px; }
 
+  /* ---------- ABC: letters with the Space Garden cast ---------- */
+  #abc-btn { left: calc(38px + 3 * var(--big)); font-size: calc(var(--big) * .27); font-weight: 900; letter-spacing: 1px; }
+  #abc-btn span:nth-child(1) { color: #ff6b6b; } #abc-btn span:nth-child(2) { color: #feca57; } #abc-btn span:nth-child(3) { color: #48dbfb; }
+  body.alien #abc-btn { display: none; }
+  #abc { position: absolute; inset: 0; z-index: 45; display: none; flex-direction: column; align-items: center;
+         gap: 10px; padding: calc(var(--big) * .35 + 10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+         background: #14143a; overflow-y: auto; }
+  #abc.show { display: flex; }
+  #abc .close-btn { position: fixed; z-index: 2; background: rgba(20,20,58,.9); }
+  #abc-letter { font-size: clamp(84px, min(24vw, 17vh), 190px); font-weight: 900; line-height: 1; color: var(--lc);
+                text-shadow: 0 6px 0 rgba(0,0,0,.25); margin-top: auto; }
+  #abc-letter small { font-size: 62%; margin-left: .08em; }
+  #abc-pic { position: relative; width: min(52vw, 32vh, 280px); aspect-ratio: 1; border-radius: 40px; background: rgba(255,255,255,.08);
+             display: flex; align-items: center; justify-content: center; }
+  #abc-pic > * { width: 80%; height: 80%; display: block; }
+  #abc-pic .abc-planet { position: relative; width: 62%; height: 62%; }
+  #abc-pic .abc-planet .ball { position: absolute; inset: 0; }
+  #abc-pic .abc-sun { width: 66%; height: 66%; position: relative; border-radius: 50%;
+                      background: radial-gradient(circle at 40% 40%, #fff9c4 0%, #ffd54f 35%, #ff9800 70%, #e65100 100%);
+                      box-shadow: 0 0 40px #ffb300; }
+  #abc-pic .zoom { transform: rotate(35deg); }
+  #abc-word { font-size: clamp(30px, 8vw, 56px); font-weight: 800; letter-spacing: 2px; }
+  #abc-word b { color: var(--lc); }
+  #abc-more { font-size: 14px; color: rgba(255,255,255,.55); letter-spacing: 1px; min-height: 1.2em; }
+  .abc-nav { display: flex; align-items: center; gap: 18px; }
+  #abc-trace { width: auto; padding: 0 22px; border-radius: calc(var(--big) / 2); font-size: calc(var(--big) * .34); font-weight: 800; gap: 8px; background: rgba(255,213,79,.2); border-color: #ffd54f; }
+  #abc-strip { display: grid; grid-template-columns: repeat(9, 36px); gap: 6px; justify-content: center; margin-bottom: auto; }
+  @media (min-width: 700px) { #abc-strip { grid-template-columns: repeat(13, 40px); } }
+  .abc-chip { height: 36px; border-radius: 10px; background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center;
+              font-weight: 800; font-size: 18px; border: 2px solid transparent; }
+  .abc-chip.seen { background: rgba(255,255,255,.2); }
+  .abc-chip.on { border-color: #ffd54f; background: rgba(255,213,79,.3); }
+
   /* ---------- Drawing pad ---------- */
   #draw { position: absolute; inset: 0; z-index: 46; display: none; flex-direction: column; align-items: center;
           gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
@@ -299,6 +332,7 @@
   <div class="big-btn top-btn" id="quiz">🔭<div id="stars-won"></div></div>
   <div class="big-btn top-btn" id="book-btn">📒</div>
   <div class="big-btn top-btn" id="draw-btn">✏️</div>
+  <div class="big-btn top-btn" id="abc-btn" aria-label="ABC letters"><span>A</span><span>B</span><span>C</span></div>
   <div id="toast"></div>
   <div id="gear">⚙️</div>
   <div id="flyer"><img class="rk-img" src="assets/rocket-fire.svg" alt="" draggable="false"></div>
@@ -315,6 +349,20 @@
     <h2>My Stickers<small id="book-count"></small></h2>
     <div class="shelf" id="shelf-planets"></div>
     <div class="shelf" id="shelf-fruits"></div>
+  </div>
+
+  <div id="abc">
+    <div class="big-btn close-btn" id="abc-close">✖️</div>
+    <div id="abc-letter"></div>
+    <div id="abc-pic"></div>
+    <div id="abc-word"></div>
+    <div id="abc-more"></div>
+    <div class="abc-nav">
+      <div class="big-btn" id="abc-prev" aria-label="Previous letter">◀️</div>
+      <div class="big-btn" id="abc-trace">✏️ Trace</div>
+      <div class="big-btn" id="abc-next" aria-label="Next letter">▶️</div>
+    </div>
+    <div id="abc-strip"></div>
   </div>
 
   <div id="draw">
@@ -517,7 +565,7 @@
   /* ================= Saved settings, stickers, drawings ================= */
   const STORE_KEY = 'space-garden', DRAW_KEY = 'space-garden-drawings';
   const load = (k, fresh) => { try { return Object.assign(fresh, JSON.parse(localStorage.getItem(k)) || {}); } catch { return fresh; } };
-  const store = load(STORE_KEY, { planets: [], fruits: [], calm: false, sound: true, name: '' });
+  const store = load(STORE_KEY, { planets: [], fruits: [], letters: [], calm: false, sound: true, name: '' });
   const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch {} };
   let drawings = (() => { try { return JSON.parse(localStorage.getItem(DRAW_KEY)) || []; } catch { return []; } })();
   const saveDrawings = () => { try { localStorage.setItem(DRAW_KEY, JSON.stringify(drawings)); } catch {} };
@@ -1443,7 +1491,14 @@
     if (stencil.none) return;
     const size = Math.min(paperW, paperH) * .8;
     sctx.save();
-    if (stencil.pic) {
+    if (stencil.letter) {
+      sctx.font = `900 ${size * 1.05}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+      sctx.textAlign = 'center'; sctx.textBaseline = 'middle';
+      sctx.fillStyle = 'rgba(154,160,181,.12)';
+      sctx.fillText(stencil.letter, paperW / 2, paperH / 2 + size * .05);
+      sctx.setLineDash([9, 8]); sctx.lineWidth = 4; sctx.lineJoin = 'round'; sctx.strokeStyle = '#9aa0b5';
+      sctx.strokeText(stencil.letter, paperW / 2, paperH / 2 + size * .05);
+    } else if (stencil.pic) {
       sctx.globalAlpha = .2;
       if (stencil.pic.complete && stencil.pic.naturalWidth) sctx.drawImage(stencil.pic, paperW / 2 - size / 2, paperH / 2 - size / 2, size, size);
     } else {
@@ -1646,6 +1701,121 @@
     updateConfetti(dt);
     requestAnimationFrame(frame);
   }
+
+  /* ================= 🔤 ABC: every letter with a Space Garden friend ================= */
+  // [kind, word]. Tapping the picture shows the next word for the same letter.
+  const ABC = {
+    A: [['fruit', 'Apple'], ['fruit', 'Avocado'], ['shape', 'Arrow']],
+    B: [['fruit', 'Banana'], ['fruit', 'Blueberry'], ['fruit', 'Blackberry'], ['fruit', 'Broccoli']],
+    C: [['fruit', 'Cherry'], ['fruit', 'Carrot'], ['fruit', 'Corn'], ['fruit', 'Coconut'], ['shape', 'Circle'], ['shape', 'Cube'], ['shape', 'Cone'], ['shape', 'Cloud'], ['shape', 'Cylinder']],
+    D: [['dance', 'Dance'], ['shape', 'Decagon']],
+    E: [['planet', 'Earth'], ['fruit', 'Eggplant']],
+    F: [['ufo', 'Flying saucer']],
+    G: [['fruit', 'Grapes']],
+    H: [['shape', 'Heart'], ['shape', 'Hexagon'], ['shape', 'Heptagon']],
+    I: [['icecream', 'Ice cream']],
+    J: [['planet', 'Jupiter']],
+    K: [['fruit', 'Kiwi'], ['shape', 'Kite']],
+    L: [['fruit', 'Lemon'], ['fruit', 'Lime']],
+    M: [['planet', 'Mars'], ['planet', 'Mercury'], ['fruit', 'Mango']],
+    N: [['planet', 'Neptune'], ['shape', 'Nonagon']],
+    O: [['fruit', 'Orange'], ['shape', 'Oval'], ['shape', 'Octagon']],
+    P: [['pip', 'Pip'], ['fruit', 'Pineapple'], ['fruit', 'Pear'], ['fruit', 'Peach'], ['fruit', 'Peas'], ['shape', 'Pentagon'], ['shape', 'Pyramid']],
+    Q: [['shape', 'Quarter circle']],
+    R: [['rocket', 'Rocket'], ['shape', 'Ring'], ['shape', 'Rectangle'], ['shape', 'Rhombus']],
+    S: [['sun', 'Sun'], ['fruit', 'Strawberry'], ['planet', 'Saturn'], ['shape', 'Star'], ['shape', 'Square'], ['shape', 'Sphere']],
+    T: [['shape', 'Triangle'], ['fruit', 'Tomato'], ['shape', 'Trapezoid'], ['shape', 'Teardrop']],
+    U: [['planet', 'Uranus']],
+    V: [['planet', 'Venus']],
+    W: [['fruit', 'Watermelon']],
+    X: [['box', 'Box']],
+    Y: [['yellow', 'Yellow']],
+    Z: [['zoom', 'Zoom']],
+  };
+  const LETTERS = Object.keys(ABC);
+  // how a speech voice should say each letter's name (a lone "A" is often read as "uh")
+  const SAY_LETTER = { A: 'Ay', B: 'Bee', C: 'See', D: 'Dee', E: 'Ee', F: 'Eff', G: 'Jee', H: 'Aitch', I: 'Eye', J: 'Jay', K: 'Kay', L: 'Ell', M: 'Em',
+                       N: 'En', O: 'Oh', P: 'Pee', Q: 'Cue', R: 'Ar', S: 'Ess', T: 'Tee', U: 'You', V: 'Vee', W: 'Double you', X: 'Ex', Y: 'Why', Z: 'Zee' };
+  const LETTER_COLORS = ['#ff6b6b', '#ff9f43', '#feca57', '#1dd1a1', '#48dbfb', '#a55eea', '#ff6fcf'];
+  const ICE_CREAM = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M28 46 L50 96 L72 46 Z" fill="#E8A35C"/><path d="M36 54 L64 54 M33 62 L67 50 M38 72 L60 62" stroke="#C47D3A" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<circle cx="50" cy="34" r="26" fill="#FF8FB8"/><circle cx="45" cy="30" r="22" fill="#FFB3CF"/><path d="M24 44 Q30 52 36 46 Q42 54 50 47 Q58 54 64 46 Q70 52 76 44" fill="#FF8FB8"/>'
+    + '<circle cx="50" cy="7" r="6" fill="#E8203F"/>' + faceSVG(50, 33, 34) + '</svg>';
+
+  function abcArt(kind, word, color) {
+    const fruit = FRUITS.find((d) => d.name === word), shapeOf = (n) => SHAPES.find((x) => x.name === n), pl = PLANETS.find((x) => x.name === word);
+    switch (kind) {
+      case 'fruit': return `<img src="${fruit.img}" alt="${word}" draggable="false">`;
+      case 'shape': return shapeSVG(shapeOf(word), color);
+      case 'planet': return `<div class="abc-planet"><div class="ball" style="background:${pl.bg}"></div>${pl.ring ? '<div class="sring"></div>' : ''}${planetFace()}</div>`;
+      case 'sun': return `<div class="abc-sun">${planetFace()}</div>`;
+      case 'pip': return '<img src="assets/pip-wave.svg" alt="Pip" draggable="false">';
+      case 'dance': return '<img src="assets/pip-dance.svg" alt="Pip dancing" draggable="false">';
+      case 'ufo': return '<img src="assets/ufo-pip.svg" alt="Flying saucer" draggable="false">';
+      case 'rocket': return '<img src="assets/rocket.svg" alt="Rocket" draggable="false">';
+      case 'zoom': return '<img class="zoom" src="assets/rocket-fire.svg" alt="Rocket zooming" draggable="false">';
+      case 'icecream': return ICE_CREAM;
+      case 'box': return shapeSVG(shapeOf('Cube'), color);
+      case 'yellow': return shapeSVG(shapeOf('Star'), '#feca57');
+    }
+    return '';
+  }
+  const abcEl = $('abc');
+  let abcI = 0, abcW = 0;
+  const seenLetters = new Set(store.letters || []);
+  const abcStrip = LETTERS.map((L, i) => {
+    const c = document.createElement('div');
+    c.className = 'abc-chip';
+    c.textContent = L;
+    $('abc-strip').appendChild(c);
+    onTap(c, () => { abcI = i; abcW = 0; showLetter(true); });
+    return c;
+  });
+  function showLetter(speak) {
+    const L = LETTERS[abcI], list = ABC[L], [kind, word] = list[abcW % list.length];
+    const color = LETTER_COLORS[abcI % LETTER_COLORS.length];
+    abcEl.style.setProperty('--lc', color);
+    $('abc-letter').innerHTML = `${L}<small>${L.toLowerCase()}</small>`;
+    $('abc-pic').innerHTML = abcArt(kind, word, color);
+    // highlight the letter inside the word (X is at the end of "box")
+    const at = word.toUpperCase().indexOf(L);
+    $('abc-word').innerHTML = at < 0 ? word : `${word.slice(0, at)}<b>${word[at]}</b>${word.slice(at + 1)}`;
+    $('abc-more').textContent = list.length > 1 ? `tap the picture · ${abcW % list.length + 1} of ${list.length}` : '';
+    abcStrip.forEach((c, i) => { c.classList.toggle('on', i === abcI); c.classList.toggle('seen', seenLetters.has(LETTERS[i])); });
+    anim($('abc-pic'), 'boop');
+    if (!seenLetters.has(L)) {
+      seenLetters.add(L); store.letters = [...seenLetters]; save();
+      if (seenLetters.size === LETTERS.length) setTimeout(() => { celebrate(); say(withName('You saw every letter from A to Z') + '!'); }, 1800);
+    }
+    if (!speak) return;
+    const n = SAY_LETTER[L];
+    if (L === 'X') say(`${n}! Box ends with ${n}!`);
+    else if (abcW % list.length) say(`${n} is for ${word}!`);
+    else say(`${n}! ${n} is for ${word}!`);
+    tone(523 + abcI * 20, { dur: .2 });
+  }
+  onTap($('abc-btn'), () => {
+    press($('abc-btn'));
+    stopQuiz();
+    abcEl.classList.add('show');
+    abcW = 0;
+    showLetter(true);
+  });
+  onTap($('abc-close'), () => abcEl.classList.remove('show'));
+  onTap($('abc-next'), () => { press($('abc-next')); abcI = (abcI + 1) % LETTERS.length; abcW = 0; showLetter(true); });
+  onTap($('abc-prev'), () => { press($('abc-prev')); abcI = (abcI + LETTERS.length - 1) % LETTERS.length; abcW = 0; showLetter(true); });
+  onTap($('abc-pic'), () => { abcW++; showLetter(true); });
+  onTap($('abc-letter'), () => { anim($('abc-letter'), 'boop'); say(SAY_LETTER[LETTERS[abcI]] + '!'); });
+  // ✏️ Trace: open the drawing pad with a dotted letter to follow
+  onTap($('abc-trace'), () => {
+    press($('abc-trace'));
+    const L = LETTERS[abcI];
+    stencil = { letter: L, say: 'the letter ' + SAY_LETTER[L] };
+    stencilsEl.querySelectorAll('.chip').forEach((x) => x.classList.remove('on'));
+    drawEl.classList.add('show');
+    renderGallery();
+    requestAnimationFrame(() => { sizePaper(); drawStencil(); });
+    say(`Let's trace the letter ${SAY_LETTER[L]}!`);
+  });
 
   addEventListener('resize', layout);
   layout();
