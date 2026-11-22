@@ -188,6 +188,20 @@
                       94% { transform: rotate(14deg); } 97% { transform: rotate(-8deg); } }
   #quiz.active { border-color: #ffd54f; box-shadow: 0 0 20px rgba(255,213,79,.7); }
   body.landed #quiz, body.alien #quiz { display: none; }
+  #mission-btn { left: calc(44px + 4 * var(--big)); font-size: calc(var(--big) * .48); }
+  #mission-count { position: absolute; right: -5px; bottom: -5px; min-width: 21px; height: 21px; padding: 0 4px;
+                   display: none; align-items: center; justify-content: center; border-radius: 11px;
+                   background: #ffd54f; color: #382900; border: 2px solid #17172f; font-size: 11px; font-weight: 900; }
+  #mission-count.show { display: flex; }
+  @media (max-width: 389px) {
+    :root { --big: 42px; --fb: 40px; }
+    #quiz { left: 6px; }
+    #book-btn { left: calc(10px + var(--big)); }
+    #draw-btn { left: calc(14px + 2 * var(--big)); }
+    #abc-btn { left: calc(18px + 3 * var(--big)); }
+    #mission-btn { left: calc(22px + 4 * var(--big)); }
+    #gear { width: 38px; height: 38px; font-size: 22px; }
+  }
   #stars-won { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px;
                font-size: 16px; letter-spacing: 2px; white-space: nowrap; pointer-events: none; }
   #book-btn.new::after { content: ''; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px;
@@ -228,6 +242,7 @@
   #gear { position: absolute; top: calc(8px + env(safe-area-inset-top)); right: 8px; z-index: 25;
           width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
           font-size: 26px; opacity: .35; }
+  @media (max-width: 389px) { #gear { width: 38px; height: 38px; font-size: 22px; } }
 
   /* ---------- Sticker book ---------- */
   #book { position: absolute; inset: 0; z-index: 45; display: none; flex-direction: column; align-items: center;
@@ -284,6 +299,43 @@
               font-weight: 800; font-size: 18px; border: 2px solid transparent; }
   .abc-chip.seen { background: rgba(255,255,255,.2); }
   .abc-chip.on { border-color: #ffd54f; background: rgba(255,213,79,.3); }
+  .abc-chip.mission-target { box-shadow: 0 0 12px #ffd54f; animation: wiggle 1.1s ease-in-out infinite; }
+
+  /* ---------- Optional guided missions ---------- */
+  #mission-picker { position: absolute; inset: 0; z-index: 47; display: none; align-items: center; justify-content: center;
+                    padding: 18px; background: rgba(5,5,16,.94); overflow-y: auto; }
+  #mission-picker.show { display: flex; }
+  .mission-panel { width: min(520px, 100%); max-height: 92vh; overflow-y: auto; padding: 22px;
+                   border-radius: 28px; background: #171735; border: 1px solid rgba(255,255,255,.2);
+                   box-shadow: 0 16px 50px rgba(0,0,0,.4); }
+  .mission-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .mission-head h2 { font-size: clamp(22px, 5vw, 30px); }
+  .mission-head p, .mission-foot { margin-top: 4px; color: rgba(255,255,255,.65); font-size: 14px; }
+  #missions-close { width: 46px; height: 46px; font-size: 24px; }
+  #mission-options { display: flex; flex-direction: column; gap: 10px; }
+  .mission-option { appearance: none; width: 100%; min-height: 76px; display: flex; align-items: center; gap: 14px;
+                    padding: 12px 16px; color: #fff; text-align: left; border: 2px solid rgba(255,255,255,.16);
+                    border-radius: 20px; background: rgba(255,255,255,.08); font: inherit; cursor: pointer; }
+  .mission-option:active { transform: scale(.98); background: rgba(255,255,255,.16); }
+  .mission-option .mission-icon { width: 48px; flex: none; text-align: center; font-size: 34px; }
+  .mission-option .mission-copy { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .mission-option strong { font-size: 18px; }
+  .mission-option small { color: rgba(255,255,255,.7); font-size: 14px; }
+  .mission-option .mission-earned { color: #ffd54f; font-size: 22px; }
+  .mission-foot { text-align: center; margin-top: 14px; }
+  #mission-progress { position: absolute; top: calc(var(--big) + 18px + env(safe-area-inset-top)); left: 50%; z-index: 48;
+                      width: min(390px, calc(100vw - 24px)); padding: 10px 14px; border: 1px solid rgba(255,213,79,.65);
+                      border-radius: 18px; background: rgba(20,20,58,.94); box-shadow: 0 6px 24px rgba(0,0,0,.35);
+                      opacity: 0; transform: translate(-50%, -8px); transition: opacity .2s, transform .2s;
+                      pointer-events: none; }
+  #mission-progress.show { opacity: 1; transform: translate(-50%, 0); }
+  .mission-progress-head { display: flex; align-items: center; gap: 10px; }
+  #mission-step-count { flex: 1; color: #ffd54f; font-size: 13px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+  #mission-prompt { margin-top: 3px; font-size: 16px; font-weight: 700; line-height: 1.3; }
+  #mission-stop { flex: none; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+                  border: 0; border-radius: 50%; color: #fff; background: rgba(255,255,255,.14); font-size: 19px;
+                  pointer-events: auto; }
+  body.mission-active #banner { top: calc(var(--big) + 92px + env(safe-area-inset-top)); }
 
   /* ---------- Drawing pad ---------- */
   #draw { position: absolute; inset: 0; z-index: 46; display: none; flex-direction: column; align-items: center;
@@ -334,6 +386,7 @@
   <div class="big-btn top-btn" id="book-btn">📒</div>
   <div class="big-btn top-btn" id="draw-btn">✏️</div>
   <div class="big-btn top-btn" id="abc-btn" aria-label="ABC letters"><span>A</span><span>B</span><span>C</span></div>
+  <div class="big-btn top-btn" id="mission-btn" role="button" tabindex="0" aria-label="Guided missions">🌟<span id="mission-count"></span></div>
   <div id="toast"></div>
   <div id="gear">⚙️</div>
   <div id="flyer"><img class="rk-img" src="assets/rocket-fire.svg" alt="" draggable="false"></div>
@@ -366,6 +419,24 @@
     <div id="abc-strip"></div>
   </div>
 
+  <div id="mission-picker" role="dialog" aria-modal="true" aria-labelledby="mission-title">
+    <div class="mission-panel">
+      <div class="mission-head">
+        <div><h2 id="mission-title">Choose a mission</h2><p>Little adventures to play and learn</p></div>
+        <div class="big-btn" id="missions-close" role="button" tabindex="0" aria-label="Close missions">✖️</div>
+      </div>
+      <div id="mission-options"></div>
+      <div class="mission-foot">Free play is always here, too.</div>
+    </div>
+  </div>
+  <div id="mission-progress" role="status" aria-live="polite">
+    <div class="mission-progress-head">
+      <span id="mission-step-count"></span>
+      <button id="mission-stop" type="button" aria-label="Stop this mission">×</button>
+    </div>
+    <div id="mission-prompt"></div>
+  </div>
+
   <div id="draw">
     <div class="draw-row">
       <div class="big-btn" id="draw-clear">🧽</div>
@@ -385,7 +456,7 @@
       <button id="btn-sound">Sound: On</button>
       <button id="btn-calm">Calm mode: Off</button>
       <button id="btn-clear">Clear the game</button>
-      <button id="btn-stickers">Reset stickers &amp; drawings</button>
+      <button id="btn-stickers">Reset stickers, stars &amp; drawings</button>
       <button id="btn-close">Close</button>
     </div>
   </div>
@@ -566,7 +637,7 @@
   /* ================= Saved settings, stickers, drawings ================= */
   const STORE_KEY = 'space-garden', DRAW_KEY = 'space-garden-drawings';
   const load = (k, fresh) => { try { return Object.assign(fresh, JSON.parse(localStorage.getItem(k)) || {}); } catch { return fresh; } };
-  const store = load(STORE_KEY, { planets: [], fruits: [], letters: [], calm: false, sound: true, name: '' });
+  const store = load(STORE_KEY, { planets: [], fruits: [], letters: [], missionStars: [], calm: false, sound: true, name: '' });
   const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch {} };
   let drawings = (() => { try { return JSON.parse(localStorage.getItem(DRAW_KEY)) || []; } catch { return []; } })();
   const saveDrawings = () => { try { localStorage.setItem(DRAW_KEY, JSON.stringify(drawings)); } catch {} };
@@ -670,6 +741,143 @@
   const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
   const lerp = (a, b, t) => a + (b - a) * t;
   const center = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
+
+  /* ================= Optional guided missions ================= */
+  const MISSION_LIBRARY = [
+    { id: 'garden', icon: '🪴', title: 'Garden helper', description: 'Fly, plant a fruit, then harvest it.',
+      events: ['land', 'plant', 'harvest'] },
+    { id: 'letters', icon: '🔤', title: 'Letter trail', description: 'Find M, trace it, and save your work.',
+      events: ['selectLetter', 'traceOpen', 'saveTrace'] },
+    { id: 'pip', icon: '👽', title: "Pip's snack time", description: 'Listen to Pip and help with 3 snacks.',
+      events: ['feed', 'feed', 'feed'] },
+  ];
+  const missionState = { id: null, step: 0, letter: 'M', traced: false };
+  const missionDefinition = () => MISSION_LIBRARY.find((m) => m.id === missionState.id);
+  const missionCount = () => (store.missionStars || []).length;
+  function refreshMissionCount() {
+    const badge = $('mission-count');
+    badge.textContent = missionCount();
+    badge.classList.toggle('show', missionCount() > 0);
+  }
+  function missionPrompt() {
+    if (missionState.id === 'garden') {
+      return [
+        'Tap the rocket to visit a planet.',
+        'Choose any fruit to plant in the garden.',
+        'Tap the plant to help it grow. When it has fruit, tap to pick it!',
+      ][missionState.step];
+    }
+    if (missionState.id === 'letters') {
+      return [
+        'Open ABC, then tap the letter M.',
+        'Tap Trace to practice the letter M.',
+        'Follow the dotted M, then tap ⭐ to save it.',
+      ][missionState.step];
+    }
+    if (missionState.id === 'pip') return `Listen to Pip's request for snack ${missionState.step + 1} of ${ALIEN_MEALS}.`;
+    return '';
+  }
+  function updateMissionProgress() {
+    const card = $('mission-progress');
+    if (!missionState.id) {
+      card.classList.remove('show');
+      document.body.classList.remove('mission-active');
+      return;
+    }
+    const def = missionDefinition();
+    const total = def.events.length;
+    $('mission-step-count').textContent = `${def.title} · ${missionState.step + 1} of ${total}`;
+    $('mission-prompt').textContent = missionPrompt();
+    card.classList.add('show');
+    document.body.classList.add('mission-active');
+  }
+  function renderMissionChoices() {
+    const host = $('mission-options');
+    host.innerHTML = '';
+    MISSION_LIBRARY.forEach((m) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'mission-option';
+      const icon = document.createElement('span');
+      icon.className = 'mission-icon';
+      icon.textContent = m.icon;
+      const copy = document.createElement('span');
+      copy.className = 'mission-copy';
+      const title = document.createElement('strong');
+      title.textContent = m.title;
+      const description = document.createElement('small');
+      description.textContent = m.description;
+      copy.append(title, description);
+      const earned = document.createElement('span');
+      earned.className = 'mission-earned';
+      earned.textContent = (store.missionStars || []).includes(m.id) ? '⭐' : '▶️';
+      card.append(icon, copy, earned);
+      missionTap(card, () => startMission(m.id));
+      host.appendChild(card);
+    });
+  }
+  function openMissionPicker() {
+    if (missionState.id) { say('Finish this mission, or tap the X to stop.'); return; }
+    stopQuiz();
+    renderMissionChoices();
+    $('mission-picker').classList.add('show');
+  }
+  function startMission(id) {
+    if (alien.active) { say('Finish Pip’s visit first, then choose another mission.'); return; }
+    if (id === 'pip' && scene !== 'space') { say('Fly back to space to meet Pip.'); return; }
+    if (id === 'garden' && !['space', 'planet'].includes(scene)) { say('Wait for the rocket to finish flying.'); return; }
+    missionState.id = id;
+    missionState.step = id === 'garden' && scene === 'planet' ? 1 : 0;
+    missionState.letter = 'M';
+    missionState.traced = false;
+    $('mission-picker').classList.remove('show');
+    updateMissionProgress();
+    say(missionPrompt());
+    if (id === 'pip') alienArrive();
+  }
+  function cancelMission() {
+    const wasPip = missionState.id === 'pip';
+    Object.assign(missionState, { id: null, step: 0, traced: false });
+    updateMissionProgress();
+    if (wasPip && alien.active) alienLeave();
+  }
+  function completeMission() {
+    const id = missionState.id;
+    const def = missionDefinition();
+    if (!id || !def) return;
+    if (!store.missionStars) store.missionStars = [];
+    if (!store.missionStars.includes(id)) store.missionStars.push(id);
+    save();
+    Object.assign(missionState, { id: null, step: 0, traced: false });
+    updateMissionProgress();
+    refreshMissionCount();
+    showBanner('Mission complete! ⭐', 'You earned a star!', 3200);
+    celebrate();
+    say(withName('Mission complete') + '! You earned a star!');
+  }
+  function missionEvent(event, value = null) {
+    if (!missionState.id) return;
+    const def = missionDefinition();
+    if (def.events[missionState.step] !== event) return;
+    if (event === 'selectLetter' && value !== missionState.letter) return;
+    missionState.step++;
+    if (missionState.step >= def.events.length) { completeMission(); return; }
+    updateMissionProgress();
+    say(missionPrompt());
+  }
+  function missionTap(el, fn) {
+    onTap(el, fn);
+    el.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      unlockAudio();
+      fn(e);
+    });
+  }
+  missionTap($('mission-btn'), () => { press($('mission-btn')); openMissionPicker(); });
+  missionTap($('missions-close'), () => $('mission-picker').classList.remove('show'));
+  missionTap($('mission-stop'), cancelMission);
+  refreshMissionCount();
 
   /* An emoji that flies from one point to another, then calls done() */
   function flyEmoji(emoji, from, to, size, done, ms = 550) {
@@ -992,6 +1200,7 @@
     confetti(c.x, c.y + 10, 14, .4, DIRT);
     tone(d.f, { dur: .25 });
     say(`Plant the ${phrase(d).toLowerCase()}!`);
+    missionEvent('plant');
   }
 
   function tapPlot(i) {
@@ -1074,6 +1283,7 @@
       say(`We landed on ${p.name}! ${p.fact} Let's plant some fruit!`);
       unlock('planets', p.name, p.name);
       scene = 'planet';
+      missionEvent('land');
     }, 1450);
   }
 
@@ -1249,6 +1459,7 @@
     } else {
       say(`${phrase(d)}! ${count}!`);
     }
+    missionEvent('harvest');
   }
 
   function pullFruit() {
@@ -1486,6 +1697,7 @@
         jingle([523, 659, 784, 1047]);
         bubble.innerHTML = '😋';
         say(`${req.type === 'count' ? req.need + '! ' : ''}Yum yum! ${praise()}`);
+        missionEvent('feed');
         setTimeout(() => (alien.served >= ALIEN_MEALS ? alienLeave() : nextRequest(false)), 2600);
       } else {
         // not what the alien asked for: it drops away
@@ -1564,6 +1776,7 @@
     dctx.strokeStyle = dctx.fillStyle = pen.hex;
     dctx.beginPath(); dctx.arc(p.x, p.y, dctx.lineWidth / 2, 0, Math.PI * 2); dctx.fill();
     dirty = true;
+    if (missionState.id === 'letters' && missionState.step === 2 && stencil.letter === missionState.letter) missionState.traced = true;
   });
   dcv.addEventListener('pointermove', (e) => {
     const last = strokes.get(e.pointerId);
@@ -1643,6 +1856,7 @@
     confetti(c.x, c.y, 60, 1);
     jingle([523, 659, 784, 1047]);
     say(`What a beautiful drawing! ${praise()}`);
+    if (missionState.id === 'letters' && missionState.traced) missionEvent('saveTrace');
   });
   addEventListener('resize', () => { if (drawEl.classList.contains('show')) sizePaper(); });
 
@@ -1681,10 +1895,11 @@
     if (store.calm) clearSky();
   });
   $('btn-stickers').addEventListener('click', () => {
-    if (!confirm('Remove all stickers and saved drawings?')) return;
-    store.planets = []; store.fruits = []; save();
+    if (!confirm('Remove all stickers, mission stars, and saved drawings?')) return;
+    store.planets = []; store.fruits = []; store.missionStars = []; save();
     drawings = []; saveDrawings();
     bookBtn.classList.remove('new');
+    refreshMissionCount();
   });
   $('btn-clear').addEventListener('click', () => {
     fruits.forEach((f) => f.el.remove()); fruits.length = 0;
@@ -1810,7 +2025,7 @@
     c.className = 'abc-chip';
     c.textContent = L;
     $('abc-strip').appendChild(c);
-    onTap(c, () => { abcI = i; abcW = 0; showLetter(true); });
+      onTap(c, () => { abcI = i; abcW = 0; showLetter(true); missionEvent('selectLetter', LETTERS[i]); });
     return c;
   });
   function showLetter(speak) {
@@ -1823,7 +2038,11 @@
     const at = word.toUpperCase().indexOf(L);
     $('abc-word').innerHTML = at < 0 ? word : `${word.slice(0, at)}<b>${word[at]}</b>${word.slice(at + 1)}`;
     $('abc-more').textContent = list.length > 1 ? `tap the picture · ${abcW % list.length + 1} of ${list.length}` : '';
-    abcStrip.forEach((c, i) => { c.classList.toggle('on', i === abcI); c.classList.toggle('seen', seenLetters.has(LETTERS[i])); });
+    abcStrip.forEach((c, i) => {
+      c.classList.toggle('on', i === abcI);
+      c.classList.toggle('seen', seenLetters.has(LETTERS[i]));
+      c.classList.toggle('mission-target', missionState.id === 'letters' && missionState.step === 0 && LETTERS[i] === missionState.letter);
+    });
     anim($('abc-pic'), 'boop');
     if (!seenLetters.has(L)) {
       seenLetters.add(L); store.letters = [...seenLetters]; save();
@@ -1841,7 +2060,7 @@
     stopQuiz();
     abcEl.classList.add('show');
     abcW = 0;
-    showLetter(true);
+    showLetter(!(missionState.id === 'letters' && missionState.step === 0));
   });
   onTap($('abc-close'), () => abcEl.classList.remove('show'));
   onTap($('abc-next'), () => { press($('abc-next')); abcI = (abcI + 1) % LETTERS.length; abcW = 0; showLetter(true); });
@@ -1858,6 +2077,7 @@
     renderGallery();
     requestAnimationFrame(() => { sizePaper(); drawStencil(); });
     say(`Let's trace the letter ${SAY_LETTER[L]}!`);
+    missionEvent('traceOpen');
   });
 
   addEventListener('resize', layout);
