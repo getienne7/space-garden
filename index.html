@@ -1688,14 +1688,23 @@
         anim(alienFace, 'chomp');
         tone(330, { dur: .12 }); setTimeout(() => tone(440, { dur: .15 }), 110);
         req.got++;
-        if (req.got < req.need) { say(String(req.got)); bubble.innerHTML = `${req.need - req.got} ${fimg(req.d)}`; return; }
+        if (req.type === 'count') bubble.innerHTML = `${req.got} ${fimg(req.d)}`;
+        if (req.got < req.need) {
+          say(String(req.got));
+          if (req.type !== 'count') bubble.innerHTML = `${req.need - req.got} ${fimg(req.d)}`;
+          return;
+        }
         req.done = true;
         alien.served++;
         pipPose('dance');
         anim(alienEl.querySelector('.crew'), 'dance');
         confetti(mouth.x, mouth.y, 40);
         jingle([523, 659, 784, 1047]);
-        bubble.innerHTML = '😋';
+        if (req.type === 'count') {
+          setTimeout(() => { if (alien.req === req) bubble.innerHTML = '😋'; }, 800);
+        } else {
+          bubble.innerHTML = '😋';
+        }
         say(`${req.type === 'count' ? req.need + '! ' : ''}Yum yum! ${praise()}`);
         missionEvent('feed');
         setTimeout(() => (alien.served >= ALIEN_MEALS ? alienLeave() : nextRequest(false)), 2600);
